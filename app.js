@@ -26,3 +26,24 @@ chart.innerHTML = `
   <path d="${path}" fill="none" stroke="#22c3ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
   ${points.filter((_,i) => i % 4 === 0 || i === points.length - 1).map(([x,y]) => `<circle cx="${x}" cy="${y}" r="4" fill="#061b2d" stroke="#78e0c5" stroke-width="2" />`).join('')}
 `
+
+const spider = document.querySelector('#coverage-spider')
+const directions = [
+  ['N', .88], ['NE', .72], ['E', .58], ['SE', .66],
+  ['S', .52], ['SW', .74], ['W', .82], ['NW', .96],
+]
+const spiderCenter = 150
+const spiderRadius = 98
+const spiderPoint = (value, index, scale = 1) => {
+  const angle = (Math.PI * 2 * index) / directions.length - Math.PI / 2
+  const distance = spiderRadius * value * scale
+  return [spiderCenter + Math.cos(angle) * distance, spiderCenter + Math.sin(angle) * distance]
+}
+
+spider.innerHTML = `
+  ${[.25,.5,.75,1].map(scale => `<polygon points="${directions.map((_,index)=>spiderPoint(1,index,scale).join(',')).join(' ')}" class="spider-ring" />`).join('')}
+  ${directions.map((_,index)=>{const [x,y]=spiderPoint(1,index);return `<line x1="${spiderCenter}" y1="${spiderCenter}" x2="${x}" y2="${y}" class="spider-axis" />`}).join('')}
+  <polygon points="${directions.map(([,value],index)=>spiderPoint(value,index).join(',')).join(' ')}" class="spider-area" />
+  ${directions.map(([,value],index)=>{const [x,y]=spiderPoint(value,index);return `<circle cx="${x}" cy="${y}" r="4" class="spider-point" />`}).join('')}
+  ${directions.map(([label],index)=>{const [x,y]=spiderPoint(1,index,1.22);return `<text x="${x}" y="${y+4}" text-anchor="middle" class="spider-label">${label}</text>`}).join('')}
+`

@@ -1,0 +1,21 @@
+.header-banner {
+  display: block;
+  overflow: hidden;
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #031221;
+}
+
+.header-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 560px) {
+  .header-banner {
+    margin-top: 14px;
+    border-radius: 12px;
+  }
+}

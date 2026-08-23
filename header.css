@@ -7,6 +7,29 @@
   background: #031221;
 }
 
+.header-banner {
+  border-color: rgba(34, 60, 255, 0.58);
+  box-shadow: 0 16px 44px rgba(34, 60, 255, 0.16);
+}
+
+.live-link {
+  border-color: #223cff;
+  background: linear-gradient(135deg, #223cff, #22a7ff);
+  color: #fff;
+  box-shadow: 0 10px 28px rgba(34, 60, 255, 0.24);
+}
+
+.panel,
+.metric-grid article,
+.trend-section {
+  border-color: rgba(34, 60, 255, 0.28);
+}
+
+.topbar nav a:hover,
+.topbar nav a:focus-visible {
+  color: #7180ff;
+}
+
 .header-banner img {
   display: block;
   width: 100%;

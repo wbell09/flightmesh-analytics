@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/header.css" />
     <link rel="stylesheet" href="/analytics.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <title>FlightMeshAir Feeder Analytics</title>
   </head>
   <body>
@@ -86,6 +87,12 @@
                 <div class="panel-heading"><div><p class="eyebrow">Your receivers</p><h2>Station activity</h2></div><span class="panel-meta" id="updated-at">Updating…</span></div>
                 <div class="station-table" id="station-table" role="table" aria-label="Stations assigned to this account"></div>
               </article>
+
+              <article class="panel station-location-panel" id="location">
+                <div class="panel-heading"><div><p class="eyebrow">Privacy-protected location</p><h2>Approximate station coordinates</h2></div><span class="panel-meta" id="coordinate-display">Not configured</span></div>
+                <div class="station-coordinate-map" id="station-coordinate-map" role="img" aria-label="Map showing an obfuscated station location"></div>
+                <p class="location-privacy-note" id="location-privacy-note">The exact receiver coordinates remain private on the FlightMeshAir server.</p>
+              </article>
             </section>
 
             <section class="trend-section">
@@ -98,6 +105,7 @@
 
       <footer><div><strong>FlightMeshAir Analytics</strong><p>Private analytics for approved feeders</p></div><div><a href="https://www.flightmeshair.com">Company</a><a href="https://feed.flightmeshair.com">Feeder Network</a><a href="mailto:support@flightmeshair.com">Contact</a></div></footer>
     </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="/app.js"></script>
   </body>
 </html>

@@ -5,6 +5,9 @@ let customer = null
 let stations = []
 let selectedStationId = null
 let refreshTimer = null
+let stationMap = null
+let stationMarker = null
+let stationPrivacyCircle = null
 
 async function request(path, options = {}) {
   const response = await fetch(`${API}${path}`, {
@@ -171,6 +174,38 @@ function renderCoverage(coverage) {
   $('#strongest-sector').textContent = strongest?.aircraft ? strongest.label : '—'
   $('#farthest-band').textContent = farthest?.label || '—'
   $('#analyzed-aircraft').textContent = coverage.available ? number.format(coverage.aircraft_count || 0) : '—'
+  renderStationLocation(coverage.approximate_location)
+}
+
+function renderStationLocation(location) {
+  const container = $('#station-coordinate-map')
+  if (!location || !window.L) {
+    $('#coordinate-display').textContent = 'Not configured'
+    $('#location-privacy-note').textContent = 'Add station coordinates to enable a privacy-protected location map. Exact coordinates will remain server-side.'
+    if (stationMap) stationMap.setView([39, -98], 3)
+    if (stationMarker) { stationMarker.remove(); stationMarker = null }
+    if (stationPrivacyCircle) { stationPrivacyCircle.remove(); stationPrivacyCircle = null }
+    return
+  }
+  const latitude = Number(location.latitude)
+  const longitude = Number(location.longitude)
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return
+  if (!stationMap) {
+    stationMap = L.map(container, { scrollWheelZoom: false }).setView([latitude, longitude], 8)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO', maxZoom: 19,
+    }).addTo(stationMap)
+  }
+  const point = [latitude, longitude]
+  stationMap.setView(point, 8)
+  if (!stationPrivacyCircle) stationPrivacyCircle = L.circle(point, { radius: 8000, color:'#22c3ff', weight:1.5, fillColor:'#223cff', fillOpacity:.12 }).addTo(stationMap)
+  else stationPrivacyCircle.setLatLng(point)
+  const icon = L.divIcon({ className:'', html:'<span class="approximate-station-marker"></span>', iconSize:[22,22], iconAnchor:[11,11] })
+  if (!stationMarker) stationMarker = L.marker(point, { icon }).addTo(stationMap)
+  else stationMarker.setLatLng(point).setIcon(icon)
+  $('#coordinate-display').textContent = `≈ ${latitude.toFixed(1)}°, ${longitude.toFixed(1)}°`
+  $('#location-privacy-note').textContent = 'Displayed coordinates are rounded to a 0.1° regional grid. The exact receiver coordinates remain private on the FlightMeshAir server.'
+  window.setTimeout(() => stationMap.invalidateSize(), 0)
 }
 
 function renderSpider(directions) {

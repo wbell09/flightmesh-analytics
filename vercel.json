@@ -1,9 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [
+  "redirects": [
     {
-      "source": "/api/:path*",
-      "destination": "https://api.wbell09.com/:path*"
+      "source": "/:path*",
+      "destination": "https://feed.flightmeshair.com/",
+      "permanent": true
     }
   ]
 }

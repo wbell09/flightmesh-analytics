@@ -33,10 +33,6 @@
 .trend-empty{align-self:center;margin:auto;color:var(--muted)}
 .station-location-panel{grid-column:1/-1;min-height:430px}
 .station-coordinate-map{height:330px;margin-top:20px;border:1px solid var(--line);border-radius:14px;background:#061726;overflow:hidden}
-.station-coordinate-map .leaflet-control-attribution{color:#7890a3;background:rgba(7,19,31,.82)}
-.station-coordinate-map .leaflet-control-attribution a{color:#a8d9cd}
-.station-coordinate-map .leaflet-control-zoom a{color:#e7eef7;background:#102538;border-color:rgba(173,201,221,.16)}
 .location-privacy-note{margin:14px 0 0;color:var(--muted);font-size:11px;line-height:1.5}
-.approximate-station-marker{display:grid;place-items:center;width:22px;height:22px;border:3px solid #e7fff9;border-radius:50%;background:var(--mint);box-shadow:0 0 0 9px rgba(120,224,197,.18),0 0 20px var(--mint)}
 @media(max-width:900px){.analytics-login{grid-template-columns:1fr;gap:38px}.account-panel{grid-template-columns:1fr auto auto}}
 @media(max-width:560px){.analytics-login{padding:54px 0}.analytics-login h1{font-size:44px}.login-card{padding:24px 20px}.account-panel{grid-template-columns:1fr}.account-panel .analytics-button,.account-panel .text-button{min-height:42px}.station-row-button{padding-inline:4px}}

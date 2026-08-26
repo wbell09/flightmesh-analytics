@@ -1,6 +1,6 @@
-# FlightMeshAir Analytics Preview
+# FlightMeshAir Feeder Analytics
 
-A public, read-only analytics preview for FlightMeshAir. The current dashboard uses synthetic values only and contains no Databricks credentials, real feeder locations, personal information, or live aircraft data.
+An authenticated, account-scoped analytics dashboard for approved FlightMeshAir feeders. The browser receives only station data authorized by the customer session; upload tokens, password hashes, and raw station coordinates are never exposed.
 
 ## Run locally
 
@@ -8,12 +8,12 @@ A public, read-only analytics preview for FlightMeshAir. The current dashboard u
 python3 -m http.server 4175
 ```
 
-Open `http://localhost:4175`.
+Open `http://localhost:4175`. Authentication requires a local `/api` proxy or a deployed Vercel preview.
 
 ## Deploy
 
-Create a new Vercel project from this directory and use the default static-site settings. Add `analytics.flightmeshair.com` under **Settings → Domains**, then create the exact `analytics` CNAME record requested by Vercel in GoDaddy.
+The included `vercel.json` proxies `/api/*` to the FlightMeshAir API so the analytics session remains first-party. Create a Vercel project from this directory using the default static-site settings and attach `analytics.flightmeshair.com` under **Settings → Domains**.
 
 ## Production boundary
 
-Keep Databricks credentials and queries on a protected backend. Never add Databricks access tokens, personal feeder coordinates, or private receiver credentials to this static frontend or to variables prefixed with `VITE_`.
+Keep database credentials and queries on the protected backend. Never add database credentials, personal feeder coordinates, or receiver upload tokens to this static frontend. Station ownership must continue to be verified by the `/account/stations/*` API routes.

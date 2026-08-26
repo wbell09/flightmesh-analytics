@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="FlightMeshAir Analytics Preview — synthetic aviation network analytics." />
+    <meta name="description" content="Private FlightMeshAir station analytics for approved feeders." />
     <meta name="theme-color" content="#031221" />
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon-fma.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -11,15 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/header.css" />
-    <style>
-      .spider-chart-wrap{width:min(330px,90%);aspect-ratio:1;margin:8px auto 4px}
-      .spider-chart-wrap svg{width:100%;height:100%;display:block;overflow:visible}
-      .spider-ring,.spider-axis{fill:none;stroke:rgba(92,195,226,.16);stroke-width:1}
-      .spider-area{fill:rgba(120,224,197,.18);stroke:var(--mint);stroke-width:2.5;stroke-linejoin:round}
-      .spider-point{fill:#061b2d;stroke:var(--cyan);stroke-width:2}
-      .spider-label{fill:var(--muted);font:600 10px 'DM Sans',sans-serif}
-    </style>
-    <title>FlightMeshAir Analytics Preview</title>
+    <link rel="stylesheet" href="/analytics.css" />
+    <title>FlightMeshAir Feeder Analytics</title>
   </head>
   <body>
     <div class="shell">
@@ -28,78 +21,82 @@
           <img src="/flightmeshair-header.png" alt="FlightMeshAir — a connected global aviation network" />
         </a>
         <div class="topbar">
-        <a class="brand" href="https://www.flightmeshair.com" aria-label="FlightMeshAir home">
-          <svg viewBox="0 0 76 76" aria-hidden="true"><ellipse cx="35" cy="41" rx="29" ry="17" fill="none" stroke="url(#orbit)" stroke-width="3" transform="rotate(-22 35 41)"/><path d="M15 48 34 39 48 20l5 1-9 20 13 7-3 4-16-5-11 12-4-1 5-15-12 9z" fill="currentColor"/><circle cx="10" cy="51" r="3.5" fill="#22c3ff"/><circle cx="61" cy="27" r="3.5" fill="#78e0c5"/><path d="M54 17c6 1 11 6 12 12M55 9c10 1 18 9 19 19" fill="none" stroke="#78e0c5" stroke-width="4" stroke-linecap="round"/><defs><linearGradient id="orbit" x1="10" y1="64" x2="66" y2="12"><stop stop-color="#22c3ff"/><stop offset="1" stop-color="#78e0c5"/></linearGradient></defs></svg>
-          <span><strong>Flight<span>Mesh</span>Air</strong><small>Analytics</small></span>
-        </a>
-        <nav aria-label="Analytics navigation">
-          <a href="#network">Network</a>
-          <a href="#coverage">Coverage</a>
-          <a href="#health">Health</a>
-        </nav>
-        <a class="live-link" href="https://live.flightmeshair.com">Open live map <span aria-hidden="true">↗</span></a>
+          <a class="brand" href="https://www.flightmeshair.com" aria-label="FlightMeshAir home">
+            <svg viewBox="0 0 76 76" aria-hidden="true"><ellipse cx="35" cy="41" rx="29" ry="17" fill="none" stroke="url(#orbit)" stroke-width="3" transform="rotate(-22 35 41)"/><path d="M15 48 34 39 48 20l5 1-9 20 13 7-3 4-16-5-11 12-4-1 5-15-12 9z" fill="currentColor"/><circle cx="10" cy="51" r="3.5" fill="#22c3ff"/><circle cx="61" cy="27" r="3.5" fill="#78e0c5"/><path d="M54 17c6 1 11 6 12 12M55 9c10 1 18 9 19 19" fill="none" stroke="#78e0c5" stroke-width="4" stroke-linecap="round"/><defs><linearGradient id="orbit" x1="10" y1="64" x2="66" y2="12"><stop stop-color="#22c3ff"/><stop offset="1" stop-color="#78e0c5"/></linearGradient></defs></svg>
+            <span><strong>Flight<span>Mesh</span>Air</strong><small>Analytics</small></span>
+          </a>
+          <nav aria-label="Analytics navigation"><a href="#activity">Activity</a><a href="#coverage">Coverage</a><a href="#health">Health</a></nav>
+          <a class="live-link" href="https://live.flightmeshair.com">Open feeder map <span aria-hidden="true">↗</span></a>
         </div>
       </header>
 
       <main>
-        <section class="hero" id="network">
-          <div>
-            <p class="eyebrow">Network intelligence preview</p>
-            <h1>See what the network is <span>learning.</span></h1>
-            <p class="summary">A read-only look at the operational signals FlightMeshAir can surface as community receivers come online.</p>
+        <section class="session-check" id="session-check" aria-live="polite"><p>Checking your FlightMeshAir session…</p></section>
+
+        <section class="analytics-login hidden" id="login-panel">
+          <div><p class="eyebrow">Private feeder analytics</p><h1>See what your station is <span>learning.</span></h1><p class="summary">Sign in with your FlightMeshAir customer account to view only the receivers assigned to you.</p></div>
+          <form id="login-form" class="login-card">
+            <h2>Feeder sign in</h2>
+            <label>Email<input id="email" name="email" type="email" autocomplete="username" required /></label>
+            <label>Password<input id="password" name="password" type="password" autocomplete="current-password" required /></label>
+            <p class="form-error hidden" id="login-error" role="alert"></p>
+            <button class="analytics-button" type="submit">Sign in</button>
+            <p class="privacy-note">Your password is sent only to the FlightMeshAir API over HTTPS. Sessions use secure HTTP-only cookies.</p>
+          </form>
+        </section>
+
+        <div class="hidden" id="dashboard">
+          <section class="hero" id="activity">
+            <div><p class="eyebrow">Your feeder intelligence</p><h1>See what your station is <span>learning.</span></h1><p class="summary" id="welcome-copy">Live, private analytics from your approved receiver.</p></div>
+            <div class="account-panel"><label for="station-select">Station<select id="station-select"></select></label><button class="analytics-button secondary" id="refresh-button" type="button">Refresh</button><button class="text-button" id="logout-button" type="button">Sign out</button></div>
+          </section>
+
+          <p class="dashboard-error hidden" id="dashboard-error" role="alert"></p>
+          <section class="empty-state hidden" id="empty-state"><h2>No stations assigned</h2><p>An operator must assign an approved receiver to this account.</p></section>
+
+          <div id="analytics-content">
+            <section class="metric-grid" aria-label="Private station summary">
+              <article><div><span>Aircraft observed</span><small>Latest hour</small></div><strong id="aircraft-total">—</strong><p id="aircraft-note">Waiting for data</p></article>
+              <article><div><span>Observations</span><small>Last 24 hours</small></div><strong id="message-total">—</strong><p id="message-note">Direct receiver observations</p></article>
+              <article><div><span>Station health</span><small>Now</small></div><strong id="station-health">—</strong><p id="heartbeat-note">Waiting for heartbeat</p></article>
+              <article><div><span>Coverage aircraft</span><small>Last 24 hours</small></div><strong id="coverage-aircraft">—</strong><p id="coverage-note">Requires station location</p></article>
+            </section>
+
+            <section class="dashboard-grid">
+              <article class="panel activity-panel">
+                <div class="panel-heading"><div><p class="eyebrow">Observation flow</p><h2>Hourly aircraft activity</h2></div><div class="legend"><i></i> Unique aircraft</div></div>
+                <div class="chart-wrap"><svg id="activity-chart" viewBox="0 0 760 250" role="img" aria-label="Unique aircraft observed during the last 24 hours"></svg></div>
+                <div class="chart-axis" id="chart-axis" aria-hidden="true"></div>
+              </article>
+
+              <article class="panel health-summary" id="health">
+                <div class="panel-heading"><div><p class="eyebrow">Receiver status</p><h2>Station health</h2></div><span class="status-pill" id="status-pill"><i></i><span>Checking</span></span></div>
+                <div class="gauge" id="health-gauge" style="--score:0"><div><strong id="health-score">0%</strong><span>heartbeat health</span></div></div>
+                <dl><div><dt>Station</dt><dd id="health-station">—</dd></div><div><dt>Aircraft now</dt><dd id="health-aircraft">—</dd></div><div><dt>Feeder version</dt><dd id="health-version">—</dd></div></dl>
+              </article>
+
+              <article class="panel coverage-panel" id="coverage">
+                <div class="panel-heading"><div><p class="eyebrow">Signal geography</p><h2>Directional coverage</h2></div><span class="panel-meta">Last 24 hours</span></div>
+                <div class="spider-chart-wrap" role="img" id="coverage-chart-label"><svg id="coverage-spider" viewBox="0 0 300 300" aria-hidden="true"></svg></div>
+                <p class="coverage-unavailable hidden" id="coverage-unavailable"></p>
+                <div class="coverage-stats"><div><span>Strongest sector</span><strong id="strongest-sector">—</strong></div><div><span>Farthest band</span><strong id="farthest-band">—</strong></div><div><span>Aircraft analyzed</span><strong id="analyzed-aircraft">—</strong></div></div>
+              </article>
+
+              <article class="panel station-panel">
+                <div class="panel-heading"><div><p class="eyebrow">Your receivers</p><h2>Station activity</h2></div><span class="panel-meta" id="updated-at">Updating…</span></div>
+                <div class="station-table" id="station-table" role="table" aria-label="Stations assigned to this account"></div>
+              </article>
+            </section>
+
+            <section class="trend-section">
+              <div><p class="eyebrow">Seven-day station trend</p><h2>Your contribution over time.</h2><p>Daily observation volume shows how consistently this receiver strengthens FlightMeshAir’s feeder network.</p></div>
+              <div class="bars" id="weekly-bars" aria-label="Seven-day station observation volume"></div>
+            </section>
           </div>
-          <div class="preview-note"><span>Demo environment</span><p>All values shown are synthetic and do not represent live aircraft, customers, or receiver locations.</p></div>
-        </section>
-
-        <section class="metric-grid" aria-label="Synthetic network summary">
-          <article><div><span>Aircraft observed</span><small>Today</small></div><strong id="aircraft-total">1,284</strong><p class="up">↑ 12.6% vs. yesterday</p></article>
-          <article><div><span>Messages received</span><small>Today</small></div><strong id="message-total">2.48M</strong><p class="up">↑ 8.3% vs. yesterday</p></article>
-          <article><div><span>Active stations</span><small>Now</small></div><strong>18 <em>/ 20</em></strong><p>Two stations reconnecting</p></article>
-          <article><div><span>Median latency</span><small>Last hour</small></div><strong>1.8 <em>sec</em></strong><p class="up">Within preview target</p></article>
-        </section>
-
-        <section class="dashboard-grid">
-          <article class="panel activity-panel">
-            <div class="panel-heading"><div><p class="eyebrow">Observation flow</p><h2>Aircraft activity</h2></div><div class="legend"><i></i> Unique aircraft</div></div>
-            <div class="chart-wrap"><svg id="activity-chart" viewBox="0 0 760 250" role="img" aria-label="Synthetic aircraft activity during the last 24 hours"></svg></div>
-            <div class="chart-axis" aria-hidden="true"><span>12a</span><span>4a</span><span>8a</span><span>12p</span><span>4p</span><span>8p</span><span>Now</span></div>
-          </article>
-
-          <article class="panel health-summary" id="health">
-            <div class="panel-heading"><div><p class="eyebrow">Receiver status</p><h2>Network health</h2></div><span class="status-pill"><i></i> Healthy</span></div>
-            <div class="gauge" style="--score:90"><div><strong>90%</strong><span>stations online</span></div></div>
-            <dl><div><dt>Online</dt><dd>18</dd></div><div><dt>Reconnecting</dt><dd>2</dd></div><div><dt>Delayed</dt><dd>0</dd></div></dl>
-          </article>
-
-          <article class="panel coverage-panel" id="coverage">
-            <div class="panel-heading"><div><p class="eyebrow">Signal geography</p><h2>Directional coverage</h2></div><span class="panel-meta">Synthetic stations</span></div>
-            <div class="spider-chart-wrap" role="img" aria-label="Synthetic relative coverage by eight compass directions: strongest northwest, followed by north and west.">
-              <svg id="coverage-spider" viewBox="0 0 300 300" aria-hidden="true"></svg>
-            </div>
-            <div class="coverage-stats"><div><span>Strongest sector</span><strong>Northwest</strong></div><div><span>Demo max distance</span><strong>126 nm</strong></div><div><span>Coverage balance</span><strong>Good</strong></div></div>
-          </article>
-
-          <article class="panel station-panel">
-            <div class="panel-heading"><div><p class="eyebrow">Contributor network</p><h2>Station activity</h2></div><span class="panel-meta">Updated just now</span></div>
-            <div class="station-table" role="table" aria-label="Synthetic station activity">
-              <div class="station-row table-head" role="row"><span>Station</span><span>Aircraft</span><span>Messages</span><span>Status</span></div>
-              <div class="station-row" role="row"><span><i class="dot online"></i>FM-DEMO-01<small>North Alabama</small></span><b>47</b><b>18.4/s</b><em>Online</em></div>
-              <div class="station-row" role="row"><span><i class="dot online"></i>FM-DEMO-02<small>Tennessee Valley</small></span><b>39</b><b>14.8/s</b><em>Online</em></div>
-              <div class="station-row" role="row"><span><i class="dot warning"></i>FM-DEMO-03<small>Regional preview</small></span><b>12</b><b>3.2/s</b><em class="warning-text">Reconnect</em></div>
-              <div class="station-row" role="row"><span><i class="dot online"></i>FM-DEMO-04<small>Regional preview</small></span><b>28</b><b>10.7/s</b><em>Online</em></div>
-            </div>
-          </article>
-        </section>
-
-        <section class="trend-section">
-          <div><p class="eyebrow">Seven-day network trend</p><h2>A clearer view with every station.</h2><p>As approved receivers contribute observations, FlightMeshAir can measure network growth, receiver health, coverage consistency, and aircraft activity without exposing personal feeder credentials.</p></div>
-          <div class="bars" aria-label="Synthetic seven-day message volume">
-            <div style="--h:44%"><span>Mon</span></div><div style="--h:58%"><span>Tue</span></div><div style="--h:52%"><span>Wed</span></div><div style="--h:72%"><span>Thu</span></div><div style="--h:66%"><span>Fri</span></div><div style="--h:84%"><span>Sat</span></div><div class="today" style="--h:96%"><span>Sun</span></div>
-          </div>
-        </section>
+        </div>
       </main>
 
-      <footer><div><strong>FlightMeshAir Analytics</strong><p>Synthetic preview · No live feeder or aircraft data</p></div><div><a href="https://www.flightmeshair.com">Company</a><a href="https://feed.flightmeshair.com">Become a feeder</a><a href="mailto:support@flightmeshair.com">Contact</a></div></footer>
+      <footer><div><strong>FlightMeshAir Analytics</strong><p>Private analytics for approved feeders</p></div><div><a href="https://www.flightmeshair.com">Company</a><a href="https://feed.flightmeshair.com">Feeder Network</a><a href="mailto:support@flightmeshair.com">Contact</a></div></footer>
     </div>
     <script src="/app.js"></script>
   </body>

@@ -22,8 +22,11 @@
 .spider-chart-wrap svg{width:100%;height:100%;display:block;overflow:visible}
 .spider-ring,.spider-axis{fill:none;stroke:rgba(92,195,226,.16);stroke-width:1}
 .spider-area{fill:rgba(120,224,197,.18);stroke:var(--mint);stroke-width:2.5;stroke-linejoin:round}
+.spider-coverage-outline{fill:none;stroke:#facc15;stroke-width:3;stroke-dasharray:8 6;stroke-linecap:round;stroke-linejoin:round}
 .spider-point{fill:#061b2d;stroke:var(--cyan);stroke-width:2}
 .spider-label{fill:var(--muted);font:600 10px 'DM Sans',sans-serif}
+.coverage-legend{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:0 0 15px;color:var(--muted);font-size:10px}
+.coverage-legend span{display:flex;align-items:center;gap:7px}.coverage-legend i{display:block;width:24px;height:0;border-top:3px solid var(--mint)}.coverage-legend .coverage-series{border-top-color:#facc15;border-top-style:dashed}
 .coverage-unavailable{margin:4px 0 18px;padding:12px;border:1px solid rgba(242,181,107,.22);border-radius:10px;color:#dcb986;background:rgba(85,57,24,.14);font-size:11px;line-height:1.5}
 .station-row-button{width:100%;border:0;color:inherit;background:transparent;text-align:left;font-family:inherit;cursor:pointer}
 .station-row-button:hover,.station-row-button.selected{background:rgba(34,60,255,.1)}

@@ -162,10 +162,12 @@ function renderCoverage(coverage) {
   const unavailable = !coverage.available
   show($('#coverage-unavailable'), unavailable)
   $('#coverage-unavailable').textContent = unavailable ? `${coverage.reason}. Add an approximate station location to enable range analytics.` : ''
-  const directions = coverage.available ? coverage.directions : ['N','NE','E','SE','S','SW','W','NW'].map(label => ({ label, aircraft:0 }))
-  const max = Math.max(...directions.map(item => Number(item.aircraft || 0)), 1)
-  const normalized = directions.map(item => [item.label, Number(item.aircraft || 0) / max])
-  renderSpider(normalized)
+  const directions = coverage.available ? coverage.directions : ['N','NE','E','SE','S','SW','W','NW'].map(label => ({ label, aircraft:0, reach_nm:0 }))
+  const maxAircraft = Math.max(...directions.map(item => Number(item.aircraft || 0)), 1)
+  const maxReach = Math.max(...directions.map(item => Number(item.reach_nm || 0)), 1)
+  const aircraftShape = directions.map(item => [item.label, Number(item.aircraft || 0) / maxAircraft])
+  const reachShape = directions.map(item => [item.label, Number(item.reach_nm || 0) / maxReach])
+  renderSpider(aircraftShape, reachShape, directions)
   const strongest = coverage.available ? [...directions].sort((a,b) => b.aircraft-a.aircraft)[0] : null
   const farthest = coverage.available ? [...coverage.distance_bands].reverse().find(band => band.aircraft > 0) : null
   $('#strongest-sector').textContent = strongest?.aircraft ? strongest.label : '—'
@@ -194,10 +196,11 @@ function renderStationLocation(location) {
   $('#location-privacy-note').textContent = 'Displayed coordinates are rounded to a 0.1° regional grid. The exact receiver coordinates remain private on the FlightMeshAir server.'
 }
 
-function renderSpider(directions) {
+function renderSpider(directions, reachDirections, rawDirections) {
   const center=150, radius=98
   const point=(value,index,scale=1)=>{const angle=Math.PI*2*index/directions.length-Math.PI/2;const distance=radius*value*scale;return[center+Math.cos(angle)*distance,center+Math.sin(angle)*distance]}
-  $('#coverage-spider').innerHTML = `${[.25,.5,.75,1].map(scale=>`<polygon points="${directions.map((_,i)=>point(1,i,scale).join(',')).join(' ')}" class="spider-ring"/>`).join('')}${directions.map((_,i)=>{const[x,y]=point(1,i);return`<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" class="spider-axis"/>`}).join('')}<polygon points="${directions.map(([,v],i)=>point(v,i).join(',')).join(' ')}" class="spider-area"/>${directions.map(([,v],i)=>{const[x,y]=point(v,i);return`<circle cx="${x}" cy="${y}" r="4" class="spider-point"/>`}).join('')}${directions.map(([label],i)=>{const[x,y]=point(1,i,1.22);return`<text x="${x}" y="${y+4}" text-anchor="middle" class="spider-label">${label}</text>`}).join('')}`
+  $('#coverage-spider').innerHTML = `${[.25,.5,.75,1].map(scale=>`<polygon points="${directions.map((_,i)=>point(1,i,scale).join(',')).join(' ')}" class="spider-ring"/>`).join('')}${directions.map((_,i)=>{const[x,y]=point(1,i);return`<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" class="spider-axis"/>`}).join('')}<polygon points="${directions.map(([,v],i)=>point(v,i).join(',')).join(' ')}" class="spider-area"/>${directions.map(([,v],i)=>{const[x,y]=point(v,i);return`<circle cx="${x}" cy="${y}" r="4" class="spider-point"/>`}).join('')}<polygon points="${reachDirections.map(([,v],i)=>point(v,i).join(',')).join(' ')}" class="spider-coverage-outline"/>${directions.map(([label],i)=>{const[x,y]=point(1,i,1.22);return`<text x="${x}" y="${y+4}" text-anchor="middle" class="spider-label">${label}</text>`}).join('')}`
+  $('#coverage-chart-label').setAttribute('aria-label', `Directional reception. Filled area shows relative aircraft counts. Dashed line shows relative 24-hour coverage reach. ${rawDirections.map(item => `${item.label}: ${Number(item.aircraft || 0)} aircraft, ${Number(item.reach_nm || 0).toFixed(1)} nautical miles`).join('; ')}.`)
 }
 
 function renderWeekly(buckets) {
